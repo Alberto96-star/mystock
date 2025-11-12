@@ -344,7 +344,7 @@ class Command(BaseCommand):
     def _create_pedidos_proveedor(self, proveedores, productos, admin_user, demo_user):
         """Crea pedidos a proveedores"""
         estados = [
-            'pendiente', 'recibido completo', 'recibido parcial', 'cancelado']
+            'pendiente', 'recibido_completo', 'recibido_parcial', 'cancelado']
         empleados = [admin_user, demo_user]
 
         for i in range(15):
