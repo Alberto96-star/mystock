@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Acceso bloqueado{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5 text-center">
+    <div class="card shadow p-4 ancho-maximo mx-auto" style="border-left: 6px solid #157046;">
+        <div class="card-body">
+            <h2 class="text-danger mb-3">Acceso bloqueado temporalmente</h2>
+            <p class="lead mb-3">Tu cuenta ha sido bloqueada debido a múltiples intentos fallidos de inicio de sesión.</p>
+            <p class="mb-3">Por motivos de seguridad, debes esperar unos minutos antes de volver a intentarlo.</p>
+            <p class="text-muted small">Si no recuerdas tu contraseña o necesitas ayuda, contacta con el administrador del sistema.</p>
+            <a href="{% url 'login' %}" class="btn btn-outline-secondary mt-3">Volver al Login</a>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

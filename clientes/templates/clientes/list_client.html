@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}lista clientes{% endblock title %}
+
+{% block content %}
+<div class="container row justify-content-center mt-2">
+    <nav class="navbar bg-secondary-subtle ancho-maximo mb-2 rounded-2">
+        <div class="container-fluid d-flex flex-row justify-content-start">
+            <form class="d-flex" role="search" method="GET">
+                <input class="form-control me-2" type="search" name="buscarCliente" placeholder="Búsqueda por cliente"
+                    aria-label="Search" value="{{ request.GET.buscarCliente }}">
+                <button class="btn btn-outline-teal" type="submit">Buscar</button>
+            </form>
+            {% if query %}
+            <a href="{% url 'listado_clientes' %}" class="btn btn-outline-secondary text-dark ms-2">
+                Limpiar filtro
+            </a>
+            {% endif %}
+            <a class="btn btn-outline-teal ms-1" href="{% url 'registro_cliente' %}">Registrar cliente</a>
+        </div>
+    </nav>
+    <div class="ancho-maximo">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+    </div>
+
+    
+    <ul class="list-group ancho-maximo p-0">
+        <li class="list-group-item d-flex justify-content-between align-items-start mb-3">
+            <div class="me-auto">
+                {% for cliente in clientes %}
+                <div class="fw-bold">{{ cliente.nombre_comercial }}</div>
+                telefono oficina: {{cliente.telefono_oficina}} <br>
+                Email: {{cliente.email|default:"No cuenta con correo electronico"}} <br>
+                Dirección fical: {{cliente.direccion_fiscal}} <br>
+                Vendedor: {{cliente.empleado_asignado|default:"No asignado"}} <br>
+                <a class="btn btn-outline-teal btn-sm m-1"
+                    href=" {% url 'detalle_cliente' cliente.id %}">Detalle</a>
+                {% empty %}
+                <h5>No hay cleintes registrados</h5>
+                {% endfor %}
+            </div>
+        </li>
+    </ul>
+</div>
+
+{% endblock content %}

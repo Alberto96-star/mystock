@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Iniciar Sesión{% endblock %}
+
+{% block extra_head %}
+<link href="{% static 'css/login_custom.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="login-page"> {# Clase que activa el overlay #}
+    <div class="login-body">
+        <div class="login-container">
+            <div class="login-box">
+                <h3 class="text-center mb-4">Iniciar Sesión</h3>
+
+                {% if form.errors %}
+                <div class="alert alert-danger" role="alert">
+                    Tu nombre de usuario o contraseña no son correctos. Por favor, inténtalo de nuevo.
+                </div>
+                {% endif %}
+
+                {% if next %}
+                    {% if user.is_authenticated %}
+                    <div class="alert alert-warning" role="alert">
+                        Tu cuenta no tiene acceso a esta página. Inicia sesión con una cuenta válida.
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info" role="alert">
+                        Por favor, inicia sesión para ver esta página.
+                    </div>
+                    {% endif %}
+                {% endif %}
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="{{ form.username.id_for_label }}" class="form-label">Usuario</label>
+                        {{ form.username }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.password.id_for_label }}" class="form-label">Contraseña</label>
+                        {{ form.password }}
+                    </div>
+                    <input type="hidden" name="next" value="{{ next }}">
+                    <button type="submit" class="btn login-btn">Iniciar Sesión</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

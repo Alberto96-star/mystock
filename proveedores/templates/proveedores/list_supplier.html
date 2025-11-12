@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Listado Proveedores{% endblock title %}
+
+{% block content %}
+<div class="container row justify-content-center mt-2">
+    <nav class="navbar bg-secondary-subtle ancho-maximo mb-2 rounded-2">
+        <div class="container-fluid">
+            <form class="d-flex" role="search" method="GET">
+                <input class="form-control me-2" type="search" name="buscarProveedor" placeholder="Búsqueda por proveedor"
+                    aria-label="Search" value="{{ request.GET.buscarProveedor }}">
+                <button class="btn btn-outline-teal" type="submit">Buscar</button>
+            </form>
+            <a class="btn btn-outline-teal" href="{% url 'registro_proveedores' %}">Crear proveedoro</a>
+        </div>
+    </nav>
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} ancho-maximo">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+
+
+    {% for proveedor in proveedores %}
+    <ul class="list-group ancho-maximo mb-2">
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+                <strong>Cif:</strong> {{proveedor.cif}} <br>
+                <strong>Nombre:</strong> {{proveedor.nombre_empresa}} <br>
+                <strong>Descripción:</strong> {{proveedor.condiciones_pago}} <br>
+                <a class="btn btn-outline-teal btn-sm mt-2" href="{% url 'editar_proveedor' proveedor.id %}">Modificar proveedor</a>
+            </div>
+        </li>
+    </ul>
+
+    {% empty %}
+    <div class="alert alert-warning ancho-maximo">
+        No hay proveedores registrados.
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock content %}

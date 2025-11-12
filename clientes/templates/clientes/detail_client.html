@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle Cliente{% endblock title %}
+
+{% block content %}
+<div class="container justify-content-center mt-2">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fas fa-edit"></i> Editar Cliente: {{ cliente.nombre_comercial }}
+                    </h4>
+                </div>
+                <div class="card-body">
+
+                    {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                    {% endif %}
+
+                    <form class="row g-4" action="{% url 'detalle_cliente' cliente.id %}" method="POST">
+                        {% csrf_token %}
+
+                        <div class="col-md-6">
+                            <label for="nombreComercial" class="form-label">Nombre Comercial:</label>
+                            <input type="text" class="form-control" id="nombreComercial" name="nombreComercial"
+                                value="{{ cliente.nombre_comercial }}">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="cif" class="form-label">CIF:</label>
+                            <input type="text" class="form-control" id="cif" name="cif" value="{{ cliente.cif }}">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="telefonoOficina" class="form-label">Teléfono Oficina:</label>
+                            <input type="text" class="form-control" id="telefonoOficina" name="telefonoOficina"
+                                value="{{ cliente.telefono_oficina }}">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="telefonoAdicional" class="form-label">Teléfono segundaro:</label>
+                            <input type="text" class="form-control" id="telefonoAdicional" name="telefonoAdicional"
+                                value="{{ cliente.telefono_adicional|default_if_none:'' }}">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="email" class="form-label">Email:</label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{ cliente.email|default_if_none:'' }}">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="username" class="form-label">Código de Empleado:</label>
+                            <input type="text" class="form-control" id="username" name="username"
+                                value="{{ cliente.empleado_asignado.username|default_if_none:'' }}">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="direccionFiscal" class="form-label">Dirección Fiscal:</label>
+                            <input type="text" class="form-control" id="direccionFiscal" name="direccionFiscal"
+                                value="{{ cliente.direccion_fiscal }}">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="ciudadFiscal" class="form-label">Ciudad Fiscal:</label>
+                            <input type="text" class="form-control" id="ciudadFiscal" name="ciudadFiscal"
+                                value="{{ cliente.ciudad_fiscal }}">
+                        </div>
+
+                        <div class="col-md-2">
+                            <label for="codigoPostalFiscal" class="form-label">Código Postal Fiscal:</label>
+                            <input type="number" class="form-control" id="codigoPostalFiscal" name="codigoPostalFiscal"
+                                value="{{ cliente.codigo_postal_fiscal }}">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="direccionEntrega" class="form-label">Dirección Entrega:</label>
+                            <input type="text" class="form-control" id="direccionEntrega" name="direccionEntrega"
+                                value="{{ cliente.direccion_entrega|default_if_none:'' }}">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="ciudadEntrega" class="form-label">Ciudad Entrega:</label>
+                            <input type="text" class="form-control" id="ciudadEntrega" name="ciudadEntrega"
+                                value="{{ cliente.ciudad_entrega|default_if_none:'' }}">
+                        </div>
+
+                        <div class="col-md-2">
+                            <label for="codigoPostalEntrega" class="form-label">Código Postal Entrega:</label>
+                            <input type="number" class="form-control" id="codigoPostalEntrega" name="codigoPostalEntrega"
+                                value="{{ cliente.codigo_postal_entrega|default_if_none:'' }}">
+                        </div>
+
+                        <div class="form-check form-switch ms-3">
+                            <input class="form-check-input" type="checkbox" id="estadoCliente" name="estadoCliente" {% if cliente.activo %}
+                                checked {% endif %}>
+                            <label class="form-check-label" for="estadoCliente">Cliente Activo</label>
+                        </div>
+
+                        <button type="submit" class="btn btn-outline-teal btn-sm col-md-1">Guardar</button>
+                        <a href="{% url 'listado_clientes' %}" class="btn btn-outline-secondary btn-sm col-md-1 ms-3">Cancelar</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

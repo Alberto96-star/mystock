@@ -1,0 +1,125 @@
+/* === MyStock LOGIN CUSTOM STYLE === */
+/* Contenedor principal del login */
+.login-page {
+    position: relative;
+    min-height: 100vh;
+    background-color: #0C1A24;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background-image: url('/static/img/fondo-login.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/* Overlay con la imagen de fondo */
+.login-page::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.12;
+    z-index: 0;
+}
+
+/* Capa de gradiente para contraste */
+.login-page::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(62, 119, 123, 0.3), rgba(21, 112, 70, 0.4));
+    z-index: 0;
+    mix-blend-mode: multiply;
+}
+
+/* Contenido del login debe estar por encima del overlay */
+.login-body {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Caja del login */
+.login-box {
+    position: relative;
+    width: 100%;
+    max-width: 360px;
+    background: #0C1A24;
+    border-radius: 20px;
+    padding: 40px 30px;
+    transform-style: preserve-3d;
+    transition: transform 0.5s ease;
+}
+
+/* Título */
+.login-box h3 {
+    color: #F1F1EC;
+    text-align: center;
+    font-size: 26px;
+    margin-bottom: 25px;
+}
+
+/* Etiquetas de formulario */
+.form-label {
+    color: #F1F1EC;
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+
+/* Inputs */
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 12px 20px;
+    border: 2px solid #3E777B;
+    color: #F1F1EC;
+    background-color: #0C1A24;
+    border-radius: 15px;
+    outline: none;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    font-family: "Roboto", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+}
+
+input:focus {
+    border-color: #157046;
+    box-shadow: 0 0 10px rgba(21, 112, 70, 0.3);
+}
+
+/* Alertas */
+.alert {
+    border-radius: 12px;
+    font-size: 14px;
+}
+
+/* Botón personalizado */
+.login-btn {
+    background-color: #3E777B;
+    color: #F1F1EC;
+    border: 2px solid #3E777B;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+}
+
+.login-btn:hover {
+    background-color: #3E777B;
+    border-color: #3E777B;
+    color: #F1F1EC;
+    box-shadow: 0 0 8px rgba(62, 119, 123, 0.4);
+    opacity: 70%;
+    transform: translateY(-1px);
+}
+
+.login-btn:active {
+    background-color: #3E777B;
+    border-color: #3E777B;
+    color: #F1F1EC;
+    box-shadow: 0 0 8px rgba(62, 119, 123, 0.4);
+    transform: translateY(-1px);
+}

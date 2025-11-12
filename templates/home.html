@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+
+{% block content %}
+
+{% if messages %}
+<div class="container mt-3">
+    {% for message in messages %}
+    <div class="alert alert-success" role="alert">
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- Sección Hero -->
+<div class="card p-4 mb-4 rounded-0">
+    <div class="container-fluid text-center">
+        <h1 class="display-5 fw-bold">Bienvenido a MyStock</h1>
+        <p class="fs-5 text-muted">Tu sistema integral para gestionar clientes, ventas, proveedores y más</p>
+        <p class="fs-6 text-muted">Optimiza tus procesos desde un solo lugar</p>
+        <img src="{% static 'img/logo-sin-fondo2.png' %}" alt="Logo" width="160" height="40">
+        <img src="{% static 'img/logo-7-sin-fondo.png' %}" alt="Logo" width="60" height="50">
+    </div>
+</div>
+
+<!-- Funcionalidades principales -->
+<div class="container mb-4">
+    <div class="row text-center">
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 rounded-0">
+                <div class="card-body">
+                    <h5 class="card-title">👥 Clientes</h5>
+                    <p class="card-text">Registra y administra fácilmente a tus clientes frecuentes y nuevos.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 rounded-0">
+                <div class="card-body">
+                    <h5 class="card-title">🧾 Órdenes de Venta</h5>
+                    <p class="card-text">Genera, consulta e imprime órdenes detalladas por cliente.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 rounded-0">
+                <div class="card-body">
+                    <h5 class="card-title">🏢 Proveedores</h5>
+                    <p class="card-text">Organiza tu red de proveedores con datos actualizados y seguimiento.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 rounded-0">
+                <div class="card-body">
+                    <h5 class="card-title">📦 Pedidos</h5>
+                    <p class="card-text">Realiza pedidos de productos, controla entregas y estados.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 rounded-0">
+                <div class="card-body">
+                    <h5 class="card-title">👔 Empleados</h5>
+                    <p class="card-text">Gestiona los datos de tu personal: roles, contactos y más.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Beneficios del sistema -->
+<div class="container">
+    <div class="card p-3 mb-3 rounded-0">
+        <h3 class="mb-4 text-center">¿Por qué usar MyStock?</h3>
+        <div class="row text-center">
+            <div class="col-md-4 mb-3">
+                <div class="p-3 border bg-light">
+                    ✅ Centraliza toda la información
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="p-3 border bg-light">
+                    ✅ Accede desde cualquier dispositivo
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="p-3 border bg-light">
+                    ✅ Interfaz sencilla y amigable
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Catálogo de productos 
+<div class="card p-3 mb-5 rounded-3">
+    <div class="container-fluid">
+        <h5 class="card-title">📘 Catálogo de productos</h5>
+        <p class="card-text">Descarga nuestro catálogo actualizado de productos disponibles.</p>
+        <a href="{% static 'img/PruebaDescargaPdf.pdf' %}" download="Catalogo_MyStock.pdf" class="">
+            <img src="{% static 'img/icono-pdf.png' %}" width="25" height="25"> Descargar PDF
+        </a>
+    </div>
+</div>
+-->
+
+<!-- Llamado a la acción -->
+<div class="container text-center">
+    <h3>¿Listo para mejorar la gestión de tu empresa?</h3>
+    <p class="mb-4">Inicia sesión para comenzar o solicita información para implementar MyStock en tu negocio.</p>
+    <a href="{% url 'login' %}" class="btn btn-bg-teal btn-sm">Iniciar sesión</a>
+    <a href="mailto:coder.arodriguez@gmail.com?subject=Consulta MyStock&body=Quiero consultar sobre (Ej: información de productos, información de registro, novedades en el servicio)"
+        class="btn btn-outline-teal btn-sm">Solicitar información</a>
+</div>
+
+{% endblock %}

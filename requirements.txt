@@ -1,0 +1,11 @@
+asgiref==3.8.1
+Django==5.2.1
+django-axes==8.0.0
+django-csp==4.0
+gunicorn==23.0.0
+packaging==25.0
+psycopg2==2.9.10
+psycopg2-binary==2.9.10
+python-dotenv==1.1.0
+sqlparse==0.5.3
+tzdata==2025.2

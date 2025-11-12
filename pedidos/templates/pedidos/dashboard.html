@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Panel de Pedidos{% endblock title %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-center text-dark">Panel de Control de Pedidos y Órdenes</h2>
+            <p class="lead text-center text-muted">Resumen general de la actividad de pedidos y ventas.</p>
+        </div>
+    </div>
+
+    {# Mensajes de Django #}
+    {% if messages %}
+        <div class="row mb-4">
+            <div class="col-12">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="row">
+        {# Tarjetas de Estadísticas de Pedidos a Proveedores #}
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-teal text-white">
+                    <h5 class="mb-0">Pedidos a Proveedores</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <p class="card-text fw-bold mb-0">Total de Pedidos:</p>
+                        <span class="badge bg-teal fs-5">{{ stats_pedidos.total|intcomma }}</span>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Pendientes:
+                            <span class="badge bg-warning text-dark">{{ stats_pedidos.pendientes|intcomma }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Enviados:
+                            <span class="badge bg-secondary">{{ stats_pedidos.enviados|intcomma }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Recibidos (Parcial/Completo):
+                            <span class="badge bg-green">{{ stats_pedidos.recibidos|intcomma }}</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-footer d-flex justify-content-end">
+                    <a href="{% url 'listado_pedidos_proveedor' %}" class="btn btn-outline-teal btn-sm">Ver todos los pedidos</a>
+                    <a href="{% url 'registro_pedido_proveedor' %}" class="btn btn-bg-teal btn-sm ms-2">Crear nuevo pedido</a>
+                </div>
+            </div>
+        </div>
+
+        {# Tarjetas de Estadísticas de Órdenes de Venta #}
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-green text-white">
+                    <h5 class="mb-0">Órdenes de Venta (Pedidos de Clientes)</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <p class="card-text fw-bold mb-0">Total de Órdenes:</p>
+                        <span class="badge bg-green fs-5">{{ stats_ordenes.total|intcomma }}</span>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Pendientes:
+                            <span class="badge bg-warning text-dark">{{ stats_ordenes.pendientes|intcomma }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Procesando:
+                            <span class="badge bg-teal">{{ stats_ordenes.procesando|intcomma }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Entregadas:
+                            <span class="badge bg-green">{{ stats_ordenes.entregadas|intcomma }}</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-footer d-flex justify-content-end">
+                    <a href="{% url 'listado_ordenes_venta' %}" class="btn btn-outline-green btn-sm">Ver todas las órdenes</a>
+                    <a href="{% url 'registro_orden_venta' %}" class="btn btn-bg-green btn-sm ms-2">Crear nueva orden</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        {# Últimos Pedidos a Proveedores #}
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-light text-dark">
+                    <h5 class="mb-0">Últimos Pedidos a Proveedores</h5>
+                </div>
+                <div class="card-body">
+                    {% if pedidos_recientes %}
+                        <ul class="list-group list-group-flush">
+                            {% for pedido in pedidos_recientes %}
+                                <li class="list-group-item">
+                                    <a href="{% url 'detalle_pedido_proveedor' pedido.id %}" class="text-decoration-none">
+                                        <strong>{{ pedido.numero_pedido }}</strong> - {{ pedido.proveedor.nombre_empresa }}
+                                    </a>
+                                    <br>
+                                    <small class="text-muted">Fecha: {{ pedido.fecha_pedido|date:"d M, Y" }} | Estado: <span class="badge bg-secondary">{{ pedido.get_estado_display }}</span> | Total: {{ pedido.total|intcomma }} €</small>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">No hay pedidos recientes a proveedores.</p>
+                    {% endif %}
+                </div>
+                <div class="card-footer d-flex justify-content-end">
+                    <a href="{% url 'listado_pedidos_proveedor' %}" class="btn btn-outline-secondary btn-sm">Ver más pedidos</a>
+                </div>
+            </div>
+        </div>
+
+        {# Últimas Órdenes de Venta #}
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-light text-dark">
+                    <h5 class="mb-0">Últimas Órdenes de Venta</h5>
+                </div>
+                <div class="card-body">
+                    {% if ordenes_recientes %}
+                        <ul class="list-group list-group-flush">
+                            {% for orden in ordenes_recientes %}
+                                <li class="list-group-item">
+                                    <a href="{% url 'detalle_orden_venta' orden.id %}" class="text-decoration-none">
+                                        <strong>{{ orden.numero_orden }}</strong> - {{ orden.cliente.nombre_comercial }}
+                                    </a>
+                                    <br>
+                                    <small class="text-muted">Fecha: {{ orden.fecha_orden|date:"d M, Y" }} | Estado: <span class="badge bg-secondary">{{ orden.get_estado_display }}</span> | Total: {{ orden.total|intcomma }} €</small>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">No hay órdenes de venta recientes.</p>
+                    {% endif %}
+                </div>
+                <div class="card-footer d-flex justify-content-end">
+                    <a href="{% url 'listado_ordenes_venta' %}" class="btn btn-outline-secondary btn-sm">Ver más órdenes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

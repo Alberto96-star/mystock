@@ -1,0 +1,279 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Pedido {{ pedido.numero_pedido }}{% endblock title %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-center text-dark">Detalle del Pedido a Proveedor: <span class="text-color-teal">
+                {{ pedido.numero_pedido }}</span>
+            </h2>
+            <p class="lead text-center text-muted">Información completa y gestión de los productos asociados a este pedido.
+            </p>
+        </div>
+    </div>
+
+    {# Mensajes de Django #}
+    {% if messages %}
+    <div class="row mb-4">
+        <div class="col-12">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {# Información General del Pedido #}
+    <div class="card shadow-sm mb-4">
+        <form method="POST" action="{% url 'eliminar_pedido_proveedor' pedido.id %}">
+            {% csrf_token %}
+            <div class="card-header bg-teal text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Datos del Pedido</h5>
+                <div>
+                    <a href="{% url 'listado_pedidos_proveedor' %}" class="btn btn-light btn-sm me-2">
+                        <i class="bi bi-arrow-left-circle me-1"></i> Volver al Listado
+                    </a>
+                        {% if pedido.estado == 'pendiente' or pedido.estado == 'cancelado' %}
+                        <button type="submit" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#eliminarPedidoModal" onclick="return confirm('¿Estás seguro de que quieres eliminar este pedido por completo?');">
+                            <i class="bi bi-trash me-1"></i> Eliminar Pedido
+                        </button>
+                        {% else %}
+                        <button type="button" class="btn btn-outline-secondary btn-sm" disabled title="Solo se pueden eliminar pedidos en estado Pendiente o Cancelado">
+                            <i class="bi bi-trash me-1"></i> Eliminar Pedido
+                        </button>
+                        {% endif %}
+                </div>
+            </div>
+        </form>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6" data-total-productos="{{ total_productos }}">
+                    <p><strong>Proveedor:</strong> {{ pedido.proveedor.nombre_empresa }}</p>
+                    <p><strong>Fecha de Pedido:</strong> {{ pedido.fecha_pedido|date:"d M, Y" }}</p>
+                    <p><strong>Fecha Entrega Estimada:</strong> {{ pedido.fecha_entrega_estimada|date:"d M, Y" }}</p>
+                    <p><strong>Empleado Creador:</strong> {{    pedido.empleado_creador.first_name|default:pedido.empleado_creador.username }}</p>
+                    <p><strong>Contacto:</strong> {{ pedido.proveedor.contacto_nombre }} - {{ pedido.proveedor.telefono_oficina }} </p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Subtotal:</strong> {{ pedido.subtotal|intcomma }} €</p>
+                    <p><strong>Impuestos (IGIC {{ pedido.igic_porcentaje|floatformat:2 }}%):</strong> 
+                        {{ pedido.impuestos|intcomma }} €</p>
+                    <p class="h5"><strong>Total:</strong> <span class="text-success">{{ pedido.total|intcomma }} €</span>
+                    </p>
+                    <p><strong>Total de Productos:</strong>
+                        <span>{{ total_productos }}</span>
+                        {% if total_productos == 0 %}
+                        <span class="badge bg-warning ms-2">Sin productos</span>
+                        {% endif %}
+                    </p>
+                    <p><strong>Notas:</strong> {{ pedido.notas|default:"N/A" }}</p>
+                </div>
+            </div>
+            <hr>
+            {# Actualizar Estado #}
+            <form method="post" action="{% url 'detalle_pedido_proveedor' pedido.id %}" class="row g-3 align-items-end">
+                {% csrf_token %}
+                <div class="col-md-4">
+                    <label for="id_estado" class="form-label">Actualizar Estado:</label>
+                    <select class="form-select" id="id_estado" name="estado">
+                        {% for key, value in estados %}
+                        <option value="{{ key }}" {% if key == pedido.estado %}selected{% endif %}
+                        {% if not tiene_productos and key in 'enviado,recibido,completado' %}disabled{% endif %}>
+                            {{ value }}
+                            {% if not tiene_productos and key in 'enviado,recibido,completado' %}
+                            (Requiere productos)
+                            {% endif %}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-auto">
+                    <button type="submit" class="btn btn-outline-warning text-dark">Actualizar Estado</button>
+                </div>
+                {% if not tiene_productos %}
+                <div class="col-12">
+                    <small class="text-warning">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        Algunos estados requieren que el pedido tenga productos asociados.
+                    </small>
+                </div>
+                {% endif %}
+            </form>
+            {# Actualizar pedidos parciales #}
+            {% if pedido.estado == 'recibido_parcial' %}
+                <hr>
+                <form method="post" action="{% url 'detalle_pedido_proveedor' pedido.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="estado" value="recibido_parcial">
+                    <h5>Actualizar Cantidades Recibidas</h5>
+                    <table class="table table-sm table-bordered align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Producto</th>
+                                <th>Cantidad Pedida</th>
+                                <th>Cantidad Recibida</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for detalle in detalles %}
+                            <tr>
+                                <td>{{ detalle.producto.nombre }}</td>
+                                <td>{{ detalle.cantidad_pedida }}</td>
+                                <td>
+                                    <input type="number" name="cantidad_recibida_{{ detalle.id }}"
+                                        value="{{ detalle.cantidad_recibida }}" min="0" max="{{ detalle.cantidad_pedida }}"
+                                        class="form-control form-control-sm">
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <div class="mb-3">
+                        <label for="id_notas" class="form-label">Notas del Pedido (opcional):</label>
+                        <textarea name="notas" id="id_notas" class="form-control" rows="1">{{ pedido.notas }}</textarea>
+                    </div>
+                    <button type="submit" class="btn btn-outline-teal">Guardar Cambios</button>
+                </form>
+                {% endif %}
+        </div>
+    </div>
+
+    {# Detalles de Productos del Pedido #}
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-teal text-white">
+            <h5 class="mb-0">Productos en este Pedido</h5>
+        </div>
+        <div class="card-body">
+            {% if detalles %}
+            <div class="table-responsive">
+                <table class="table table-striped table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col">Producto</th>
+                            <th scope="col">Cantidad Pedida</th>
+                            <th scope="col">Cantidad Recibida</th>
+                            <th scope="col">Precio Unitario</th>
+                            <th scope="col">Subtotal Línea</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for detalle in detalles %}
+                        <tr>
+                            <td>{{ detalle.producto.nombre }}</td>
+                            <td>{{ detalle.cantidad_pedida|intcomma }}</td>
+                            <td>{{ detalle.cantidad_recibida|intcomma }}</td>
+                            <td>{{ detalle.precio_unitario|intcomma }} €</td>
+                            <td>{{ detalle.subtotal|intcomma }} €</td>
+                            <td>
+                                {% if total_productos > 1 and puede_editar %}
+                                <form action="{% url 'eliminar_producto_pedido_proveedor' detalle.id %}" method="post"
+                                    class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm" title="Eliminar Producto"
+                                        onclick="return confirm('¿Estás seguro de que quieres eliminar este producto del pedido?');">
+                                        Eliminar
+                                    </button>
+                                </form>
+                                {% else %}
+                                <button type="button" class="btn btn-outline-secondary btn-sm"
+                                    title="No se puede eliminar el último producto del pedido" disabled>
+                                    Eliminar
+                                </button>
+                                <small class="text-muted d-block">No se puede eliminar</small>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info" role="alert">
+                Este pedido no tiene productos asociados aún.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {# Añadir Nuevo Producto al Pedido #}
+    {% if puede_editar %}
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-secondary text-white">
+            <h5 class="mb-0">Añadir Nuevo Producto al Pedido</h5>
+        </div>
+        <div class="card-body">
+            <form method="post" action="{% url 'agregar_producto_pedido_proveedor' pedido.id %}">
+                {% csrf_token %}
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-2">
+                        <label class="form-label">Categorias</label>
+                        <select class="form-select me-2" id="categoria-filter">
+                            <option value="">Filtrar categorías</option>
+                            {% for cat in categorias %}
+                            <option value="{{ cat.id }}">
+                                {{ cat.nombre_categoria }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="id_producto" class="form-label">Producto - <small id="stock-orden-0" class="text-muted">Stock disponible: 0</small><span class="text-danger"> *</span></label>
+                        <select class="form-select" id="id_producto" name="producto" required>
+                            <option value="">Selecciona un producto</option>
+                            {% for prod in productos %}
+                                {% with inventario=prod.inventarios.first %}
+                                <option value="{{ prod.id }}" data-precio="{{ prod.precio_compra }}" cantActual="{{ inventario.cantidad_actual }}" cantReservada="{{ inventario.cantidad_reservada }}" data-categoria="{{ prod.categoria.id }}">{{ prod.nombre }}
+                                </option>
+                                {% endwith %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="id_cantidad" class="form-label">Cantidad <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="id_cantidad" name="cantidad" value="1" min="1"
+                            required>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="id_precio_unitario" class="form-label">Precio Compra (€) <span
+                                class="text-danger">*</span></label>
+                        <input type="number" step="0.01" class="form-control" id="id_precio_unitario" name="precio_unitario"
+                            value="0.00" min="0" required>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="id_igic_porcentaje" class="form-label">Porcentaje de IGIC (%) <span
+                                class="text-danger">*</span></label>
+                        <select class="form-select" id="id_igic_porcentaje" name="igic_porcentaje" required>
+                            <option value="">Seleccionar porcentaje de IGIC...</option>
+                            <option value="0.00" selected>0% - Exento</option>
+                            <option value="3.00">3% - Tipo reducido</option>
+                            <option value="7.00">7% - Tipo general</option>
+                        </select>
+                    </div>
+                    <div class="col-md-1 d-flex justify-content-end">
+                        <button type="submit" class="btn btn-outline-teal">
+                            <i class="bi bi-plus-circle"></i> Añadir
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info" role="alert">
+        No se pueden agregar mas productos
+    </div>
+    {% endif %}
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script src="{% static 'pedidos/js/detallePedidoProveedor.js' %}"></script>
+{% endblock extra_js %}

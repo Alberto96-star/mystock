@@ -1,0 +1,81 @@
+.form-loading-indicator {
+    display: none;
+    padding: 10px;
+    text-align: center;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #495057;
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Estilos para botones deshabilitados */
+button[disabled],
+input[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed !important;
+    pointer-events: none;
+}
+
+/* Estilos para formularios en proceso */
+.form-submitting {
+    position: relative;
+    opacity: 0.8;
+}
+
+.form-submitting::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.7);
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Indicador de éxito */
+.form-success-indicator {
+    display: none;
+    padding: 10px;
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    border-radius: 4px;
+    color: #155724;
+    margin-top: 10px;
+}
+
+/* Indicador de error */
+.form-error-indicator {
+    display: none;
+    padding: 10px;
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+    color: #721c24;
+    margin-top: 10px;
+}

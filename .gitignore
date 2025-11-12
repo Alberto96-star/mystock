@@ -1,0 +1,42 @@
+# Entorno virtual y otros
+venv/
+ENV/
+env/
+__pycache__
+notas.md
+
+deploy.sh
+gunicorn_config.py
+recomendaciones.txt
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE y editores
+.vscode/
+
+# Base de datos
+*.sql
+*.sqlite3
+*.postgresql
+signals.log
+csp_violations.log
+
+# Archivos de migraciones compilados
+*/migrations/*.py
+!*/migrations/__init__.py
+
+
+# Archivos de configuración con secretos
+.env
+
+# Logs
+logs/
+*.log
+# Backup files
+*.bak
+*.backupgunicorn.pid
+*.backup
+gunicorn.pid
+gunicorn_config.py

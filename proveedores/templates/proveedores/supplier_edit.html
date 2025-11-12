@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Proveedor - {{ proveedor.nombre_empresa }}{% endblock title %}
+
+{% block content %}
+
+{% if messages %}
+<div class="container mt-3">
+    {% for message in messages %}
+        <div class="alert alert-warning" role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fas fa-edit"></i> Editar Proveedor: {{ proveedor.nombre_empresa }}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form class="row g-4" method="POST">
+                        {% csrf_token %}
+                        
+                        <div class="col-md-6">
+                            <label for="nombreEmpresa" class="form-label">Nombre Empresa: <span class="text-danger">*</span></label>
+                            <input type="text" name="nombreEmpresa" class="form-control" id="nombreEmpresa"
+                                placeholder="Nombre de la empresa" value="{{ proveedor.nombre_empresa }}" required>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <label for="cif" class="form-label">CIF: <span class="text-danger">*</span></label>
+                            <input type="text" name="cif" class="form-control" id="cif" 
+                                placeholder="CIF o NIF empresarial" value="{{ proveedor.cif }}" required>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <label for="nombreContacto" class="form-label">Nombre contacto: <span class="text-danger">*</span></label>
+                            <input type="text" name="nombreContacto" class="form-control" id="nombreContacto" 
+                                placeholder="Contacto de la empresa" value="{{ proveedor.contacto_nombre }}" required>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <label for="telefonoOficina" class="form-label">Teléfono oficina: <span class="text-danger">*</span></label>
+                            <input type="tel" name="telefonoOficina" class="form-control" id="telefonoOficina"
+                                placeholder="Número principal" value="{{ proveedor.telefono_oficina }}" required>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <label for="telefonoSegundario" class="form-label">Teléfono segundario:</label>
+                            <input type="tel" name="telefonoSegundario" class="form-control" id="telefonoSegundario"
+                                placeholder="Número segundario" value="{{ proveedor.telefono_segundario|default:'' }}">
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="email" class="form-label">Email:</label>
+                            <input type="email" name="email" class="form-control" id="email" 
+                                placeholder="info@correo.com" value="{{ proveedor.email|default:'' }}">
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="direccionFiscal" class="form-label">Dirección Proveedor:</label>
+                            <input type="text" name="direccionFiscal" class="form-control" id="direccionFiscal"
+                                value="{{ proveedor.direccion|default:'' }}">
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label for="ciudadFiscal" class="form-label">Ciudad:</label>
+                            <input type="text" name="ciudadFiscal" class="form-control" id="ciudadFiscal"
+                                value="{{ proveedor.ciudad|default:'' }}">
+                        </div>
+                        
+                        <div class="col-md-2">
+                            <label for="codigoPostalFiscal" class="form-label">Código postal:</label>
+                            <input type="number" name="codigoPostalFiscal" class="form-control" id="codigoPostalFiscal"
+                                value="{{ proveedor.codigo_postal|default:'' }}">
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="condicionesPago" class="form-label">Condiciones de Pago:</label>
+                            <input type="text" name="condicionesPago" class="form-control" id="condicionesPago"
+                                value="{{ proveedor.condiciones_pago|default:'' }}">
+                        </div>
+                        
+                        <div class="col-12">
+                            <hr>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <small class="text-muted">
+                                        <strong>Creado:</strong> {{ proveedor.creado_el|date:"d/m/Y H:i" }} |
+                                        <strong>Actualizado:</strong> {{ proveedor.actualizado_el|date:"d/m/Y H:i" }}
+                                    </small>
+                                </div>
+                                <div>
+                                    <button type="submit" class="btn btn-outline-teal btn-sm">
+                                        <i class="fas fa-save"></i> Actualizar
+                                    </button>
+                                    <a href="{% url 'listado_proveedor' %}" class="btn btn-outline-secondary btn-sm ms-2">
+                                        <i class="fas fa-times"></i> Cancelar
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

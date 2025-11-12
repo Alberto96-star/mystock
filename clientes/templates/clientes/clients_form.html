@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Registro Clientes{% endblock title %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fas fa-edit"></i>Crear Cliente
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                    <div class="container mt-3">
+                        {% for message in messages %}
+                            <div class="alert alert-warning" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+
+                    <form class="row g-4" action="{% url 'registro_cliente' %}" method="POST">
+                        {% csrf_token %}
+                        <div class="col-md-6">
+                            <label for="nombreComercial" class="form-label">Nombre Comercial:</label>
+                            <input type="text" name="nombreComercial" class="form-control" id="nombreComercial"
+                                placeholder="Nombre de la empresa o persona de facturación" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="cif" class="form-label">CIF:</label>
+                            <input type="text" name="cif" class="form-control" id="cif" placeholder="CIF o NIF empresarial" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="telefonoOficina" class="form-label">Teléfono oficina:</label>
+                            <input type="tel" name="telefonoOficina" class="form-control" id="telefonoOficina"
+                                placeholder="Número principal" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="telefonoAdicional" class="form-label">Teléfono segundario:</label>
+                            <input type="tel" name="telefonoSegundario" class="form-control" id="telefonoAdicional"
+                                placeholder="Número segundario">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="email" class="form-label">Email:</label>
+                            <input type="email" name="email" class="form-control" id="email" placeholder="info@correo.com">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="username" class="form-label">Código empleado:</label>
+                            <input type="text" name="username" class="form-control" id="username">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="direccionFiscal" class="form-label">Dirección fiscal:</label>
+                            <input type="text" name="direccionFiscal" class="form-control" id="direccionFiscal" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="ciudadFiscal" class="form-label">Ciudad fiscal:</label>
+                            <input type="text" name="ciudadFiscal" class="form-control" id="ciudadFiscal" required>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="codigoPostalFiscal" class="form-label">Código postal fiscal:</label>
+                            <input type="number" name="codigoPostalFiscal" class="form-control" id="codigoPostalFiscal" required>
+                        </div>
+                        <div class="col-12">
+                            <h6 class="text-muted mt-3 mb-2">
+                                <i class="fas fa-truck"></i> Dirección de Entrega (Opcional)
+                            </h6>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="direccionEntrega" class="form-label">Dirección entrega:</label>
+                            <input type="text" name="direccionEntrega" class="form-control" id="direccionEntrega">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="ciudadEntrega" class="form-label">Ciudad entrega:</label>
+                            <input type="text" name="ciudadEntrega" class="form-control" id="ciudadEntrega">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="codigoPostalEntrega" class="form-label">Código postal entrega:</label>
+                            <input type="number" name="codigoPostalEntrega" class="form-control" id="codigoPostalEntrega">
+                        </div>
+                        <div class="col-12">
+                            <div class="form-check form-switch">
+                                <label class="form-check-label" for="estadoCliente">
+                                    Cliente Activo
+                                </label>
+                                <input class="form-check-input" name="estadoCliente" type="checkbox" role="switch" id="estadoCliente">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-outline-teal">Guardar</button>
+                            <a href="{% url 'home' %}" class="btn btn-outline-secondary ms-2">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

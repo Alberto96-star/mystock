@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Registro Proveedores{% endblock title %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fas fa-edit"></i> Crear Proveedor
+                    </h4>
+                </div>
+                    {% if messages %}
+                    <div class="container mt-3">
+                        {% for message in messages %}
+                            <div class="alert alert-warning" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                <div class="card-body">
+                    <form class="row g-4" action="{% url 'registro_proveedores' %}" method="POST">
+                        {% csrf_token %}
+                        <div class="col-md-6">
+                            <label for="nombreEmpresa" class="form-label">Nombre Empresa:</label>
+                            <input type="text" name="nombreEmpresa" class="form-control" id="nombreEmpresa"
+                                placeholder="Nombre de la empresa" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="cif" class="form-label">CIF:</label>
+                            <input type="text" name="cif" class="form-control" id="cif" placeholder="CIF o NIF empresarial" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="nombreContacto" class="form-label">Nombre contacto:</label>
+                            <input type="text" name="nombreContacto" class="form-control" id="nombreContacto" placeholder="Contacto de la empresa" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="telefonoOficina" class="form-label">Teléfono oficina:</label>
+                            <input type="tel" name="telefonoOficina" class="form-control" id="telefonoOficina"
+                                placeholder="Número principal" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="telefonoAdicional" class="form-label">Teléfono segundario:</label>
+                            <input type="tel" name="telefonoAdicional" class="form-control" id="telefonoAdicional"
+                                placeholder="Número segundario">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="email" class="form-label">Email:</label>
+                            <input type="email" name="email" class="form-control" id="email" placeholder="info@correo.com">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="direccionFiscal" class="form-label">Dirección Proveedor:</label>
+                            <input type="text" name="direccionFiscal" class="form-control" id="direccionFiscal">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="ciudadFiscal" class="form-label">Ciudad:</label>
+                            <input type="text" name="ciudadFiscal" class="form-control" id="ciudadFiscal">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="codigoPostalFiscal" class="form-label">Código postal:</label>
+                            <input type="number" name="codigoPostalFiscal" class="form-control" id="codigoPostalFiscal">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="condicionesPago" class="form-label">Condiciones de Pago:</label>
+                            <input type="text" name="condicionesPago" class="form-control" id="condicionesPago">
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-outline-teal">Guardar</button>
+                            <a href="{% url 'listado_proveedor' %}" class="btn btn-outline-secondary ms-2">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

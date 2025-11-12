@@ -1,0 +1,251 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Registrar Pedido a Proveedor{% endblock title %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-center text-dark">Registrar Nuevo Pedido a Proveedor</h2>
+            <p class="lead text-center text-muted">Completa los detalles para crear un nuevo pedido de productos a un proveedor.</p>
+        </div>
+    </div>
+
+    {# Mensajes de Django #}
+    {% if messages %}
+        <div class="row mb-4">
+            <div class="col-12">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-teal text-white">
+            <h5 class="mb-0">Datos del Pedido</h5>
+        </div>
+        <div class="card-body">
+            <form method="post" id="pedidoForm">
+                {% csrf_token %}
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="id_proveedor" class="form-label">Proveedor <span class="text-danger">*</span></label>
+                        <select class="form-select" id="id_proveedor" name="proveedor" required>
+                            <option value="">Selecciona un proveedor</option>
+                            {% for prov in proveedores %}
+                                <option value="{{ prov.id }}">{{ prov.nombre_empresa }}</option>
+                            {% endfor %}
+                        </select>
+                        <!--boton para el modal crear cliente-->
+                        <button type="button" class="btn btn-outline-green m-2" data-bs-toggle="modal" data-bs-target="#modalCrearProveedor">Crear Proveedor</button>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="id_fecha_pedido" class="form-label">Fecha de Pedido <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" id="id_fecha_pedido" name="fecha_pedido" value="{{ fecha_actual|date:'Y-m-d' }}" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="id_fecha_entrega_estimada" class="form-label">Fecha Entrega Estimada <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" id="id_fecha_entrega_estimada" name="fecha_entrega_estimada" required>
+                    </div>
+                    <div class="col-12">
+                        <label for="id_notas" class="form-label">Notas</label>
+                        <textarea class="form-control" id="id_notas" name="notas" rows="1"></textarea>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <h5 class="mb-3">Detalles de Productos</h5>
+                <div id="product-details-container">
+                    {# Los productos se añadirán aquí dinámicamente con JavaScript #}
+                    <div class="row g-3 align-items-end mb-3 product-row border rounded p-3 bg-light">
+                        <div class="col-md-2">
+                            <label class="form-label">Categorias</label>
+                            <select class="form-select me-2 categoria-filter" id="categoria-filter">
+                                <option value="">Filtrar categorías</option>
+                                {% for cat in categorias %}
+                                <option value="{{ cat.id }}">
+                                    {{ cat.nombre_categoria }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="product-select-0" class="form-label">Producto - <small id="stock-orden-0" class="text-muted">Stock disponible: 0</small><span class="text-danger"> *</span></label>
+                            <select class="form-select product-select" id="product-select-0" name="producto_id" required>
+                                <option value="">Selecciona un producto</option>
+                                {% for prod in productos %}
+                                    {% with inventario=prod.inventarios.first %}
+                                    <option value="{{ prod.id }}" data-precio="{{ prod.precio_compra }}" data-categoria="{{ prod.categoria.id }}" cantActual="{{ inventario.cantidad_actual|default:0 }}" cantReservada="{{ inventario.cantidad_reservada|default:0 }}">
+                                        {{ prod.nombre }}
+                                    </option>
+                                    {% endwith %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="cantidad-0" class="form-label">Cantidad <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control cantidad-input" id="cantidad-0" name="cantidad" value="1" min="1" required>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="precio-unitario-0" class="form-label">Precio Compra (€) <span class="text-danger">*</span></label>
+                            <input type="number" step="0.01" class="form-control precio-unitario-input" id="precio-unitario-0" name="precio_unitario" value="0.00" min="0" required>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="id_igic_porcentaje" class="form-label">Porcentaje de IGIC (%) <span class="text-danger">*</span></label>
+                            <select class="form-select" id="id_igic_porcentaje" name="igic_porcentaje" required>
+                                <option value="">Seleccionar porcentaje de IGIC...</option>
+                                <option value="0.00" selected>0% - Exento</option>
+                                <option value="3.00">3% - Tipo reducido</option>
+                                <option value="7.00">7% - Tipo general</option>
+                            </select>
+                        </div>
+                        <div class="col-md-1 d-flex justify-content-center">
+                            <button type="button" class="btn btn-danger btn-sm remove-product-btn" style="display: none;">
+                                Eliminar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end mb-4">
+                    <button type="button" class="btn btn-outline-secondary" id="add-product-btn">
+                        <i class="bi bi-plus-circle me-1"></i> Añadir Otro Producto
+                    </button>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <a href="{% url 'listado_pedidos_proveedor' %}" class="btn btn-outline-secondary me-2">Cancelar</a>
+                    <button type="submit" class="btn btn-outline-teal">Registrar Pedido</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para crear proveedor -->
+<div class="modal fade" id="modalCrearProveedor" tabindex="-1" aria-labelledby="modalCrearProveedorLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form id="formCrearProveedor" action="{% url 'registro_proveedores' %}" method="POST">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="modalCrearProveedorLabel">
+                        <i class="fas fa-building-user"></i> Crear Proveedor
+                    </h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Alert para mostrar mensajes de error o éxito -->
+                    <div id="modalProveedorAlert" class="alert d-none" role="alert"></div>
+                    
+                    <div class="row g-3">
+                        <!-- Información básica -->
+                        <div class="col-md-8">
+                            <label for="modalNombreEmpresa" class="form-label">Nombre Empresa:</label>
+                            <input type="text" name="nombreEmpresa" class="form-control" id="modalNombreEmpresa"
+                                placeholder="Nombre de la empresa" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="modalCifProveedor" class="form-label">CIF:</label>
+                            <input type="text" name="cif" class="form-control" id="modalCifProveedor" 
+                                placeholder="CIF o NIF empresarial" required>
+                        </div>
+                        
+                        <!-- Contacto y teléfonos -->
+                        <div class="col-md-6">
+                            <label for="modalNombreContacto" class="form-label">Nombre contacto:</label>
+                            <input type="text" name="nombreContacto" class="form-control" id="modalNombreContacto"
+                                placeholder="Contacto de la empresa" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="modalTelefonoOficinaProveedor" class="form-label">Teléfono oficina:</label>
+                            <input type="tel" name="telefonoOficina" class="form-control" id="modalTelefonoOficinaProveedor"
+                                placeholder="Número principal" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="modalTelefonoSegundario" class="form-label">Teléfono segundario:</label>
+                            <input type="tel" name="telefonoSegundario" class="form-control" id="modalTelefonoSegundario"
+                                placeholder="Número segundario">
+                        </div>
+                        
+                        <!-- Email -->
+                        <div class="col-12">
+                            <label for="modalEmailProveedor" class="form-label">Email:</label>
+                            <input type="email" name="email" class="form-control" id="modalEmailProveedor" 
+                                placeholder="info@correo.com">
+                        </div>
+                        
+                        <!-- Dirección fiscal -->
+                        <div class="col-12">
+                            <h6 class="text-muted mt-3 mb-2">
+                                <i class="fas fa-map-marker-alt"></i> Dirección Fiscal (Opcional)
+                            </h6>
+                        </div>
+                        <div class="col-md-8">
+                            <label for="modalDireccionFiscalProveedor" class="form-label">Dirección Proveedor:</label>
+                            <input type="text" name="direccionFiscal" class="form-control" id="modalDireccionFiscalProveedor">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="modalCiudadFiscalProveedor" class="form-label">Ciudad:</label>
+                            <input type="text" name="ciudadFiscal" class="form-control" id="modalCiudadFiscalProveedor">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="modalCodigoPostalFiscalProveedor" class="form-label">Código postal:</label>
+                            <input type="number" name="codigoPostalFiscal" class="form-control" id="modalCodigoPostalFiscalProveedor">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="modalCondicionesPago" class="form-label">Condiciones de Pago:</label>
+                            <input type="text" name="condicionesPago" class="form-control" id="modalCondicionesPago"
+                                placeholder="Ej: 30 días, contado, etc.">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-outline-teal">
+                        <i class="fas fa-save"></i> Crear Proveedor
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{# Script inline solo para pasar datos de Django a JavaScript #}
+<script>
+    // Datos de productos para JavaScript
+    window.productosData = [
+        {% for prod in productos %}
+        {
+                {% with inventario=prod.inventarios.first %}
+                id: "{{ prod.id }}",
+                nombre: "{{ prod.nombre|escapejs }}",
+                precio: "{{ prod.precio_venta|floatformat:2 }}",
+                categoria: "{{ prod.categoria.id }}",
+                cantActual: "{{ inventario.cantidad_actual|default:0 }}",
+                cantReservada: "{{ inventario.cantidad_reservada|default:0 }}"
+                {% endwith %}
+            }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    window.categoriasData = [
+        {% for cat in categorias %}
+        { id: "{{ cat.id }}", nombre: "{{ cat.nombre_categoria|escapejs }}" }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+</script>
+{% endblock content %}
+
+{% block extra_js %}
+<script src="{% static 'pedidos/js/registroPedidoProveedor.js' %}"></script>
+<script src="{% static 'pedidos/js/modalCrearProveedor.js' %}"></script>
+{% endblock extra_js %}
