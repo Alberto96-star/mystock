@@ -269,7 +269,7 @@ class Command(BaseCommand):
     def _create_ordenes_venta(self, clientes, productos, admin_user, demo_user, cantidad):
         """Crea órdenes de venta con detalles"""
         estados = [
-            'Pendiente', 'Procesando', 'Entregado', 'Cancelado']
+            'pendiente', 'procesando', 'entregado', 'cancelado']
         metodos_pago = ['Transferencia', 'Contado',
                         'Tarjeta', 'Cheque', '30 días', '60 días']
         empleados = [admin_user, demo_user]
@@ -344,7 +344,7 @@ class Command(BaseCommand):
     def _create_pedidos_proveedor(self, proveedores, productos, admin_user, demo_user):
         """Crea pedidos a proveedores"""
         estados = [
-            'Pendiente', 'Recibido Completo', 'Recibido Parcial', 'Cancelado']
+            'pendiente', 'recibido Completo', 'recibido Parcial', 'cancelado']
         empleados = [admin_user, demo_user]
 
         for i in range(15):
