@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'proveedores',
     'pedidos.apps.PedidosConfig',
     'axes',
+    'core',
 ]
 
 MIDDLEWARE = [
