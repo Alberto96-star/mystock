@@ -292,8 +292,7 @@ class Command(BaseCommand):
                 metodo_pago=random.choice(metodos_pago),
                 notas=fake.text(max_nb_chars=200) if random.choice(
                     [True, False]) else None,
-                empleado_creador=random.choice(empleados) if random.choice([
-                    True, False]) else None,
+                empleado_creador=random.choice(empleados),
                 creado_el=timezone.now(),
                 actualizado_el=timezone.now()
             )
@@ -323,8 +322,7 @@ class Command(BaseCommand):
                     igic_porcentaje=igic_porcentaje,
                     igic_importe=igic_importe,
                     subtotal=subtotal_linea,
-                    empleado_creador=random.choice(empleados) if random.choice([
-                        True, False]) else None,
+                    empleado_creador=random.choice(empleados),
                     creado_el=timezone.now(),
                     actualizado_el=timezone.now()
                 )
@@ -366,8 +364,7 @@ class Command(BaseCommand):
                 total=Decimal('0.00'),
                 notas=fake.text(max_nb_chars=200) if random.choice(
                     [True, False]) else None,
-                empleado_creador=random.choice(empleados) if random.choice([
-                    True, False]) else None,
+                empleado_creador=random.choice(empleados),
                 creado_el=timezone.now(),
                 actualizado_el=timezone.now()
             )
@@ -398,8 +395,7 @@ class Command(BaseCommand):
                     igic_porcentaje=igic_porcentaje,
                     igic_importe=igic_importe,
                     subtotal=subtotal_linea,
-                    empleado_creador=random.choice(empleados) if random.choice([
-                        True, False]) else None,
+                    empleado_creador=random.choice(empleados),
                     creado_el=timezone.now(),
                     actualizado_el=timezone.now()
                 )

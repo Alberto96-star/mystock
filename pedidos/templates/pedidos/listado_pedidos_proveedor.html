@@ -107,7 +107,13 @@
                                         {% endif %}
                                     </td>
                                     <td>{{ pedido.total|intcomma }} €</td>
-                                    <td>{{ pedido.empleado_creador.first_name|default:pedido.empleado_creador.username }}</td>
+                                    <td>
+                                        {% if pedido.empleado_creador %}
+                                            {{ pedido.empleado_creador.first_name|default:pedido.empleado_creador.username }}
+                                        {% else %}
+                                            <em class="text-muted">Sin asignar</em>
+                                        {% endif %}
+                                    </td>
                                     <td>
                                         <a href="{% url 'detalle_pedido_proveedor' pedido.id %}" class="btn btn-outline-teal btn-sm" title="Ver Detalle">
                                             <i class="bi bi-eye"></i> Ver

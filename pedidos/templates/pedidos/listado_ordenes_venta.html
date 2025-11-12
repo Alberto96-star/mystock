@@ -109,7 +109,13 @@
                                     </td>
                                     <td>{{ orden.total|intcomma }} €</td>
                                     <td>{{ orden.metodo_pago }}</td>
-                                    <td>{{ orden.empleado_creador.first_name|default:orden.empleado_creador.username }}</td>
+                                    <td>
+                                        {% if orden.empleado_creador %}
+                                            {{ orden.empleado_creador.first_name|default:orden.empleado_creador.username }}
+                                        {% else %}
+                                            <em class="text-muted">Sin asignar</em>
+                                        {% endif %}
+                                    </td>
                                     <td>
                                         <a href="{% url 'detalle_orden_venta' orden.id %}" class="btn btn-outline-success btn-sm" title="Ver Detalle">
                                             <i class="bi bi-eye"></i> Ver
