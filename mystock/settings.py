@@ -28,13 +28,17 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-if DEBUG:
-    ALLOWED_HOSTS = []
-else:
-    ALLOWED_HOSTS = [
-        'mystock.rodriguezalberto.com',
-        'www.mystock.rodriguezalberto.com'
-    ]
+ALLOWED_HOSTS = os.getenv(
+    'DJANGO_ALLOWED_HOSTS',
+    'localhost,127.0.0.1').split(',')
+
+# if DEBUG:
+#     ALLOWED_HOSTS = []
+# else:
+#     ALLOWED_HOSTS = [
+#         'mystock.rodriguezalberto.com',
+#         'www.mystock.rodriguezalberto.com'
+#     ]
 
 
 # Application definition
@@ -57,6 +61,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -166,23 +171,43 @@ CSRF_COOKIE_SECURE = not DEBUG
 SESSION_COOKIE_SECURE = not DEBUG
 
 # configuraciones de seguridad para producción
-if not DEBUG:  # Solo en producción
-    SECURE_SSL_REDIRECT = False
+# if not DEBUG:  # Solo en producción
+#     SECURE_SSL_REDIRECT = False
+#     SECURE_BROWSER_XSS_FILTER = True
+#     SECURE_CONTENT_TYPE_NOSNIFF = True
+#     SECURE_HSTS_SECONDS = 31536000
+#     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+#     SECURE_HSTS_PRELOAD = True
+#     SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+#     CSRF_COOKIE_SECURE = True
+#     CSRF_COOKIE_SAMESITE = 'Lax'
+#     X_FRAME_OPTIONS = 'DENY'
+#     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+#     CSRF_TRUSTED_ORIGINS = [
+#         'https://mystock.rodriguezalberto.com',
+#         'https://www.mystock.rodriguezalberto.com'
+#     ]
+
+if not DEBUG:
+    SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT', 'False') == 'True'
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
-    SECURE_HSTS_SECONDS = 31536000
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_PRELOAD = True
+    SECURE_HSTS_SECONDS = 31536000 if os.getenv(
+        'ENABLE_HSTS', 'False') == 'True' else 0
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = os.getenv(
+        'ENABLE_HSTS', 'False') == 'True'
+    SECURE_HSTS_PRELOAD = os.getenv('ENABLE_HSTS', 'False') == 'True'
     SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
-    CSRF_COOKIE_SECURE = True
-    CSRF_COOKIE_SAMESITE = 'Lax'
     X_FRAME_OPTIONS = 'DENY'
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    CSRF_TRUSTED_ORIGINS = [
-        'https://mystock.rodriguezalberto.com',
-        'https://www.mystock.rodriguezalberto.com'
-    ]
 
+    # Solo en producción real con proxy
+    if os.getenv('USE_PROXY', 'False') == 'True':
+        SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+    # CSRF trusted origins desde variable de entorno
+    csrf_origins = os.getenv('CSRF_TRUSTED_ORIGINS', '')
+    if csrf_origins:
+        CSRF_TRUSTED_ORIGINS = csrf_origins.split(',')
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
@@ -209,6 +234,15 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
@@ -219,11 +253,6 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'handlers': {
-        'file': {
-            'level': 'INFO',
-            'class': 'logging.FileHandler',
-            'filename': 'signals.log',
-        },
         'console': {
             'level': 'INFO',
             'class': 'logging.StreamHandler',
@@ -231,7 +260,7 @@ LOGGING = {
     },
     'loggers': {
         'pedidos.signals': {
-            'handlers': ['file', 'console'],
+            'handlers': ['console'],
             'level': 'INFO',
             'propagate': True,
         },

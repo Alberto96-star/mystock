@@ -110,16 +110,6 @@ class Command(BaseCommand):
 
     def _create_users(self):
         """Crea usuarios de prueba"""
-        admin = User.objects.create_superuser(
-            username='admin',
-            email='admin@mystock.com',
-            password='admin123',
-            first_name='Admin',
-            last_name='Sistema',
-            is_staff=True,
-            is_active=True
-        )
-        self.stdout.write('  ✓ Admin: admin/admin123')
 
         demo = User.objects.create_user(
             username='demo',
@@ -414,7 +404,7 @@ class Command(BaseCommand):
     def _print_summary(self, options):
         """Imprime resumen de datos creados"""
         self.stdout.write('\n📊 Resumen de datos creados:')
-        self.stdout.write(f'   • Usuarios: 2 (admin, demo)')
+        self.stdout.write(f'   • Usuarios: demo')
         self.stdout.write(
             f'   • Categorías: {CategoriaProducto.objects.count()}')
         self.stdout.write(f'   • Productos: {options["productos"]}')
@@ -424,5 +414,4 @@ class Command(BaseCommand):
         self.stdout.write(
             f'   • Pedidos proveedor: {PedidoProveedor.objects.count()}')
         self.stdout.write('\n🔑 Credenciales:')
-        self.stdout.write('   • Admin: admin / admin123')
         self.stdout.write('   • Demo:  demo / demo123\n')
