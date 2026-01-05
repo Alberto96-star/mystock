@@ -23,6 +23,7 @@ COPY . .
 
 # Crear usuario no-root
 RUN useradd -m -u 1000 django && \
+    mkdir -p /app/staticfiles && \
     chown -R django:django /app
 
 USER django

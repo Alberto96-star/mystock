@@ -1,8 +1,5 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load humanize %}
-
-
 {% block content %}
 
 {% if messages %}
@@ -95,18 +92,6 @@
         </div>
     </div>
 </div>
-
-<!-- Catálogo de productos 
-<div class="card p-3 mb-5 rounded-3">
-    <div class="container-fluid">
-        <h5 class="card-title">📘 Catálogo de productos</h5>
-        <p class="card-text">Descarga nuestro catálogo actualizado de productos disponibles.</p>
-        <a href="{% static 'img/PruebaDescargaPdf.pdf' %}" download="Catalogo_MyStock.pdf" class="">
-            <img src="{% static 'img/icono-pdf.png' %}" width="25" height="25"> Descargar PDF
-        </a>
-    </div>
-</div>
--->
 
 <!-- Llamado a la acción -->
 <div class="container text-center">
