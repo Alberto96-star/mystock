@@ -5,6 +5,8 @@ env/
 __pycache__
 notas.md
 
+staticfiles
+
 deploy.sh
 gunicorn_config.py
 recomendaciones.txt

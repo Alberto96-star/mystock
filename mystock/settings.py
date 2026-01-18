@@ -32,14 +32,6 @@ ALLOWED_HOSTS = os.getenv(
     'DJANGO_ALLOWED_HOSTS',
     'localhost,127.0.0.1').split(',')
 
-# if DEBUG:
-#     ALLOWED_HOSTS = []
-# else:
-#     ALLOWED_HOSTS = [
-#         'mystock.rodriguezalberto.com',
-#         'www.mystock.rodriguezalberto.com'
-#     ]
-
 
 # Application definition
 
@@ -167,26 +159,9 @@ CSRF_COOKIE_SAMESITE = 'Lax'
 
 CSRF_COOKIE_SECURE = not DEBUG
 
-# Solo usar cookies seguras en producción (cuando DEBUG = False)
+# Solo usar cookies seguras en producción
 SESSION_COOKIE_SECURE = not DEBUG
 
-# configuraciones de seguridad para producción
-# if not DEBUG:  # Solo en producción
-#     SECURE_SSL_REDIRECT = False
-#     SECURE_BROWSER_XSS_FILTER = True
-#     SECURE_CONTENT_TYPE_NOSNIFF = True
-#     SECURE_HSTS_SECONDS = 31536000
-#     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-#     SECURE_HSTS_PRELOAD = True
-#     SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
-#     CSRF_COOKIE_SECURE = True
-#     CSRF_COOKIE_SAMESITE = 'Lax'
-#     X_FRAME_OPTIONS = 'DENY'
-#     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-#     CSRF_TRUSTED_ORIGINS = [
-#         'https://mystock.rodriguezalberto.com',
-#         'https://www.mystock.rodriguezalberto.com'
-#     ]
 
 if not DEBUG:
     SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT', 'False') == 'True'
@@ -213,8 +188,6 @@ if not DEBUG:
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
 LANGUAGE_CODE = 'es-es'
-
-# TIME_ZONE = 'UTC' # esta es la opción por defecto
 
 TIME_ZONE = 'Atlantic/Canary'
 
