@@ -57,7 +57,7 @@ class Command(BaseCommand):
                     self._clean_database()
 
                 self.stdout.write('👤 Creando usuarios...')
-                admin_user, demo_user = self._create_users()
+                demo_user = self._create_users()
 
                 self.stdout.write('📦 Creando categorías de productos...')
                 categorias = self._create_categorias()
@@ -74,15 +74,15 @@ class Command(BaseCommand):
 
                 self.stdout.write('👥 Creando clientes...')
                 clientes = self._create_clientes(
-                    admin_user, demo_user, options['clientes'])
+                    demo_user, options['clientes'])
 
                 self.stdout.write('🛒 Creando órdenes de venta...')
                 self._create_ordenes_venta(
-                    clientes, productos, admin_user, demo_user, options['ordenes'])
+                    clientes, productos, demo_user, options['ordenes'])
 
                 self.stdout.write('📥 Creando pedidos a proveedores...')
                 self._create_pedidos_proveedor(
-                    proveedores, productos, admin_user, demo_user)
+                    proveedores, productos, demo_user)
 
                 self.stdout.write(self.style.SUCCESS(
                     '\n✅ Reset completado exitosamente'))
@@ -95,7 +95,7 @@ class Command(BaseCommand):
             raise
 
     def _clean_database(self):
-        """Limpia solo las tablas de negocio, preserva Django admin"""
+        """Limpia solo las tablas de negocio"""
         DetalleOrdenVenta.objects.all().delete()
         DetallePedidoProveedor.objects.all().delete()
         OrdenVenta.objects.all().delete()
@@ -105,8 +105,8 @@ class Command(BaseCommand):
         CategoriaProducto.objects.all().delete()
         Cliente.objects.all().delete()
         Proveedor.objects.all().delete()
-        # Mantén usuarios admin si existen, borra solo demo
-        User.objects.filter(username__in=['demo', 'admin']).delete()
+        # Borra solo el usuario demo
+        User.objects.filter(username='demo').delete()
 
     def _create_users(self):
         """Crea usuarios de prueba"""
@@ -122,7 +122,7 @@ class Command(BaseCommand):
         )
         self.stdout.write('  ✓ Demo: demo/demo123 (sin permisos admin)')
 
-        return admin, demo
+        return demo
 
     def _create_categorias(self):
         """Crea categorías de productos"""
@@ -223,10 +223,10 @@ class Command(BaseCommand):
         self.stdout.write(
             f'  ✓ {len(productos)} registros de inventario creados')
 
-    def _create_clientes(self, admin_user, demo_user, cantidad):
+    def _create_clientes(self, demo_user, cantidad):
         """Crea clientes"""
         clientes = []
-        empleados = [admin_user, demo_user]
+        empleados = [demo_user]
 
         for i in range(cantidad):
             cliente = Cliente.objects.create(
@@ -256,13 +256,13 @@ class Command(BaseCommand):
         self.stdout.write(f'  ✓ {cantidad} clientes creados')
         return clientes
 
-    def _create_ordenes_venta(self, clientes, productos, admin_user, demo_user, cantidad):
+    def _create_ordenes_venta(self, clientes, productos, demo_user, cantidad):
         """Crea órdenes de venta con detalles"""
         estados = [
             'pendiente', 'procesando', 'entregado', 'cancelado']
         metodos_pago = ['Transferencia', 'Contado',
                         'Tarjeta', 'Cheque', '30 días', '60 días']
-        empleados = [admin_user, demo_user]
+        empleados = [demo_user]
 
         for i in range(cantidad):
             fecha_orden = fake.date_between(
@@ -331,11 +331,11 @@ class Command(BaseCommand):
 
         self.stdout.write(f'  ✓ {cantidad} órdenes de venta creadas')
 
-    def _create_pedidos_proveedor(self, proveedores, productos, admin_user, demo_user):
+    def _create_pedidos_proveedor(self, proveedores, productos, demo_user):
         """Crea pedidos a proveedores"""
         estados = [
             'pendiente', 'recibido_completo', 'recibido_parcial', 'cancelado']
-        empleados = [admin_user, demo_user]
+        empleados = [demo_user]
 
         for i in range(15):
             fecha_pedido = fake.date_between(
