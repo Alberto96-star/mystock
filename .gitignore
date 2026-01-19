@@ -43,11 +43,5 @@ logs/
 gunicorn.pid
 gunicorn_config.py
 
-
-# tests
-pytest.ini
-tests/
-settings_test.py
-
 # Docker
 .dockerignore
